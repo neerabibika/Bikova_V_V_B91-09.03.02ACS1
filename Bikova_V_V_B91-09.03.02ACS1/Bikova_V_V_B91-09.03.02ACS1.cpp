@@ -9,9 +9,13 @@
 using namespace std;
 
 const int numElements = 1000000;
+const int n = 1000;
 float Asgl[numElements];
 double Adbl[numElements];
-
+float Bsgl[n][n];
+float Csgl[n][n];
+double Bdbl[n][n];
+double Cdbl[n][n];
 
 float parallelSumFloat(const vector<float>& arr, int numThreads)
 {
@@ -34,6 +38,51 @@ double parallelSumDouble(const std::vector<double>& arr, int numThreads)
     return sum;
 }
 
+void matrixMultiplicationFloat(float* A, float(*B)[1000], float(*C)[1000], int n) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            C[i][j] = 0;
+            for (int k = 0; k < n; k++) {
+                C[i][j] += A[i] * B[k][j];
+            }
+        }
+    }
+}
+
+void parallelMatrixMultiplicationFloat(float* A, float(*B)[1000], float(*C)[1000], int n, int numThreads) {
+#pragma omp parallel for num_threads(numThreads)
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            C[i][j] = 0;
+            for (int k = 0; k < n; k++) {
+                C[i][j] += A[i] * B[k][j];
+            }
+        }
+    }
+}
+
+void matrixMultiplicationDouble(double* A, double(*B)[1000], double(*C)[1000], int n) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            C[i][j] = 0;
+            for (int k = 0; k < n; k++) {
+                C[i][j] += A[i] * B[k][j];
+            }
+        }
+    }
+}
+
+void parallelMatrixMultiplicationDouble(double* A, double(*B)[1000], double(*C)[1000], int n, int numThreads) {
+#pragma omp parallel for num_threads(numThreads)
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            C[i][j] = 0;
+            for (int k = 0; k < n; k++) {
+                C[i][j] += A[i] * B[k][j];
+            }
+        }
+    }
+}
 
 int main() {
     setlocale(LC_ALL, "Russian");
@@ -81,6 +130,58 @@ int main() {
         auto durationDouble = chrono::duration_cast<chrono::milliseconds>(endDouble - startDouble);
 
         std::cout << numThreads << "\t\t" << durationFloat.count() << " ms\t\t" << durationDouble.count() << " ms" << std::endl;
+    }
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++)
+            Bsgl[i][j] = rand();
+    }
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++)
+            Bdbl[i][j] = rand();
+    }
+
+
+    auto start = chrono::high_resolution_clock::now(); // Засекаем время начала
+
+    matrixMultiplicationFloat(Asgl, Bsgl, Csgl, n);
+
+    auto end = chrono::high_resolution_clock::now(); // Засекаем время конца
+    chrono::duration<double> duration = end - start; // Вычисляем затраченное время
+    cout << "Последовательный код Flt: " << duration.count() << " секунд" << endl;
+
+    auto start1 = std::chrono::high_resolution_clock::now(); // Засекаем время начала
+
+    matrixMultiplicationDouble(Adbl, Bdbl, Cdbl, n);
+
+    auto end1 = std::chrono::high_resolution_clock::now(); // Засекаем время конца
+    chrono::duration<double> duration1 = end1 - start1; // Вычисляем затраченное время
+    cout << "Последовательный код Dbl: " << duration1.count() << " секунд" << endl;
+
+
+    std::cout << "Num threads\tFloat time\tDouble time" << std::endl;
+
+
+
+
+    for (int numThreads = 2; numThreads <= 32; numThreads *= 2)
+    {
+        start = chrono::high_resolution_clock::now(); // Засекаем время начала
+
+        parallelMatrixMultiplicationFloat(Asgl, Bsgl, Csgl, n, numThreads);
+
+        end = chrono::high_resolution_clock::now(); // Засекаем время конца
+        duration = end - start; // Вычисляем затраченное время
+
+        start1 = chrono::high_resolution_clock::now(); // Засекаем время начала
+
+        parallelMatrixMultiplicationDouble(Adbl, Bdbl, Cdbl, n, numThreads);
+
+        end1 = chrono::high_resolution_clock::now(); // Засекаем время конца
+        duration1 = end1 - start1; // Вычисляем затраченное время
+
+
+        std::cout << numThreads << "\t\t" << duration.count() << " s\t\t" << duration1.count() << " s" << endl;
     }
 
 }
