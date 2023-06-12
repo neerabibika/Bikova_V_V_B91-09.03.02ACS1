@@ -38,7 +38,7 @@ double parallelSumDouble(const std::vector<double>& arr, int numThreads)
     return sum;
 }
 
-void matrixMultiplicationFloat(float* A, float(*B)[1000], float(*C)[1000], int n) {
+void matrixMultiplicationFloat(float* A, float(*B)[n], float(*C)[n], int n) {
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
             C[i][j] = 0;
@@ -49,7 +49,7 @@ void matrixMultiplicationFloat(float* A, float(*B)[1000], float(*C)[1000], int n
     }
 }
 
-void parallelMatrixMultiplicationFloat(float* A, float(*B)[1000], float(*C)[1000], int n, int numThreads) {
+void parallelMatrixMultiplicationFloat(float* A, float(*B)[n], float(*C)[n], int n, int numThreads) {
 #pragma omp parallel for num_threads(numThreads)
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
@@ -61,7 +61,7 @@ void parallelMatrixMultiplicationFloat(float* A, float(*B)[1000], float(*C)[1000
     }
 }
 
-void matrixMultiplicationDouble(double* A, double(*B)[1000], double(*C)[1000], int n) {
+void matrixMultiplicationDouble(double* A, double(*B)[n], double(*C)[n], int n) {
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
             C[i][j] = 0;
@@ -72,7 +72,7 @@ void matrixMultiplicationDouble(double* A, double(*B)[1000], double(*C)[1000], i
     }
 }
 
-void parallelMatrixMultiplicationDouble(double* A, double(*B)[1000], double(*C)[1000], int n, int numThreads) {
+void parallelMatrixMultiplicationDouble(double* A, double(*B)[n], double(*C)[n], int n, int numThreads) {
 #pragma omp parallel for num_threads(numThreads)
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
