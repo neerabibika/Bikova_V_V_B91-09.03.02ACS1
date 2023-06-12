@@ -35,8 +35,7 @@ double parallelSumDouble(const std::vector<double>& arr, int numThreads)
 }
 
 
-int main()
-{
+int main() {
     setlocale(LC_ALL, "Russian");
     cout << "Количество процессоров: " << omp_get_num_procs() << "\n";
     for (int i = 0; i < 1000000; i++) {
@@ -83,6 +82,8 @@ int main()
 
         std::cout << numThreads << "\t\t" << durationFloat.count() << " ms\t\t" << durationDouble.count() << " ms" << std::endl;
     }
+
+}
 // Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
 // Отладка программы: F5 или меню "Отладка" > "Запустить отладку"
 
