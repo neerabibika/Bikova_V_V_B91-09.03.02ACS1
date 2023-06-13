@@ -9,7 +9,7 @@
 using namespace std;
 
 const int numElements = 1000000;
-const int n = 1000;
+const int n = 100;
 float Asgl[numElements];
 double Adbl[numElements];
 float Bsgl[n][n];
